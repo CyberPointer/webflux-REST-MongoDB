@@ -1,12 +1,9 @@
 package com.spring5webfluxrest;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+//@SpringBootTest
 class Spring5WebfluxRestApplicationTests {
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 

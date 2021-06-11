@@ -5,10 +5,12 @@ import com.spring5webfluxrest.repositories.VendorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -56,5 +58,66 @@ class VendorControllerTest {
                 .exchange()
                 .expectBody(Vendor.class);
 
+    }
+
+    @Test
+    void createVendor() {
+        Vendor vendor2 = new Vendor();
+        vendor2.setFirstName("mike");
+
+        given(vendorRepository.saveAll(any(Publisher.class))).willReturn(Flux.just(vendor2));
+
+        Mono<Vendor> vendorToSave = Mono.just(vendor2);
+
+        webTestClient.post()
+                .uri("/api/v1/vendors/")
+                .body(vendorToSave, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+
+    }
+
+    @Test
+    void updateVendor() {
+        Vendor vendor2 = new Vendor();
+        vendor2.setFirstName("mike");
+
+        given(vendorRepository.save(any(Vendor.class))).willReturn(Mono.just(vendor2));
+
+        Mono<Vendor> vendorToSave = Mono.just(vendor2);
+
+        webTestClient.put()
+                .uri("/api/v1/vendors/1")
+                .body(vendorToSave, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+    }
+
+    @Test
+    public void testPatch() {
+        Vendor vendor1 = new Vendor();
+        vendor1.setFirstName("bob");
+        vendor1.setLastName("marley");
+
+        Vendor vendor2 = new Vendor();
+        vendor2.setFirstName("mike");
+        vendor2.setLastName("lancia");
+
+
+        given(vendorRepository.findById(anyString())).willReturn(Mono.just(vendor1));
+        given(vendorRepository.save(any(Vendor.class))).willReturn(Mono.just(vendor2));
+
+        Mono<Vendor> vendorToPatch = Mono.just(vendor2);
+
+        webTestClient.patch()
+                .uri("/api/v1/vendors/1")
+                .body(vendorToPatch, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
     }
 }
