@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 class VendorControllerTest {
     VendorRepository vendorRepository;
@@ -119,5 +120,7 @@ class VendorControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk();
+
+        verify(vendorRepository).save(any());
     }
 }
